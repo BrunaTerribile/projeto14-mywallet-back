@@ -1,4 +1,5 @@
-import usersCollection from "../index"
+import usersCollection from "../db"
+import sessionsCollection from "../db"
 import bcrypt from "bcrypt"
 import { v4 as uuidV4 } from "uuid"
 
@@ -40,6 +41,11 @@ export async function signIn(req, res){
         if(!passwordOk) {
             return res.sendStatus(401)
         }
+
+        await sessionsCollection.insertOne({
+            token,
+            userId: userExist._id
+        })
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
