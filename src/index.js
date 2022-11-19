@@ -1,8 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { MongoClient } from 'mongodb';
-import { signIn, signUp } from './controllers/users.controller';
-import dotenv from 'dotenv';
+import { signIn, signUp } from './controllers/authController';
+import { getExtract, addEntry, addOutgo } from './controllers/userController';
 import joi from 'joi'
 
 const userSchema = joi.object({
@@ -12,26 +11,10 @@ const userSchema = joi.object({
 })
 
 const app = express();
-dotenv.config();
-
 app.use(cors());
 app.use(express.json());
 
-const mongoClient = new MongoClient(process.env.MONGO_URI);
-
-try {
-    await mongoClient.connect();
-    console.log("MongoDB conected!");
-} catch (err){
-    console.log(err);
-}
-
-const db = mongoClient.db("mywalllet");
-const usersCollection = db.collection("users");
-const extractCollection = db.collection("extract");
-const sessionsCollection = db.collection("sessions")
-
-
+//Rotas 
 app.post("/", signIn);
 
 app.post("/sign-up", signUp);
@@ -43,5 +26,5 @@ app.post("/new-entry", addEntry);
 app.post("/new-outgo", addOutgo);
 
 
-
-app.listen(5000, () => console.log("Port 5000"));
+const port = process.env.PORT || 3333;
+app.listen(port, () => console.log(`Server running in port: ${port}`));
