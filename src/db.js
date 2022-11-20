@@ -12,7 +12,9 @@ try {
 }
 
 // Criação do banco e coleções
-const db = mongoClient.db("mywalllet");
+const db = mongoClient.db("mywallet");
 export const usersCollection = db.collection("users");
 export const extractCollection = db.collection("extract");
 export const sessionsCollection = db.collection("sessions");
+
+export default sessionsCollection

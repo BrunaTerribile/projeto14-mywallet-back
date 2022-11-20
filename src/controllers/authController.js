@@ -1,10 +1,18 @@
-import usersCollection from "../db"
-import sessionsCollection from "../db"
+import usersCollection from "../db.js"
+import sessionsCollection from "../db.js"
 import bcrypt from "bcrypt"
 import { v4 as uuidV4 } from "uuid"
+import joi from 'joi'
+import { Db } from "mongodb"
+
+const userSchema = joi.object({
+    name: joi.string().required(),
+    password: joi.string().required(),
+    email: joi.string().email().required()
+})
 
 export async function signUp(req, res){
-    const user = req.body;
+    const user = req.body; //name, email and password
 
     try {
         const userExist = await usersCollection.findOne({ email: user.email }); //verifica se este email já foi cadastrado anteriormente
@@ -19,8 +27,8 @@ export async function signUp(req, res){
         }
     
         const hashPassword = bcrypt.hashSync(user.password, 10) //criptografa a senha do usuário
-
-        await usersCollection.insertOne({...user, password: hashPassword});
+        await usersCollection.insertOne({ ...user, password: hashPassword });
+        
         res.sendStatus(201)
     } catch (err){
         console.log(err)
