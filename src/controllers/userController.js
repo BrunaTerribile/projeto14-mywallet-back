@@ -1,4 +1,4 @@
-import {sessionsCollection, extractCollection} from "../db.js"
+import {sessionsCollection, extractCollection} from "../database/db.js"
 
 export async function getExtract(req, res){
     const { authorization } = req.headers;

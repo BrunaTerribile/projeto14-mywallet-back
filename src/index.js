@@ -1,23 +1,15 @@
 import express from 'express';
 import cors from 'cors';
-import { signIn, signUp } from './controllers/authController.js';
-import { getExtract, addEntry, addOutgo } from './controllers/userController.js';
+
+import usersRoutes from './routes/usersRoutes.js';
+import extractRoutes from './routes/extractRoutes.js'
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(usersRoutes);
+app.use(extractRoutes);
 
-//Rotas 
-app.post("/sign-in", signIn);
-
-app.post("/sign-up", signUp);
-
-app.get("/extract", getExtract);
-
-app.post("/new-entry", addEntry);
-
-app.post("/new-outgo", addOutgo);
-
+app.use(cors());
 
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Server running in port: ${port}`));

@@ -1,4 +1,4 @@
-import { usersCollection, sessionsCollection } from "../db.js"
+import { usersCollection, sessionsCollection } from "../database/db.js"
 import bcrypt from "bcrypt"
 import { v4 as uuidV4 } from "uuid"
 import joi from 'joi'
