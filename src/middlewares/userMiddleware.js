@@ -1,10 +1,27 @@
-export function getUser(req, res, next){
+import { sessionsCollection, usersCollection } from "../database/db.js"
+
+export async function getUser(req, res, next){
     const { authorization } = req.headers;
     const token = authorization?.replace("Bearer ", "");
     
     if(!token) {
-        return res.sendStatus(401);
+        return res.status(401).send("parou no middleware");
+    }
+
+    try {
+        const session = await sessionsCollection.findOne({ token });
+        const user = await usersCollection.findOne({ _id: session?.userId });
+
+        if (!user) {
+        return res.status(401).send(session);
+        }
+
+        res.locals.user = user;
+    } catch (err){
+        console.log(err);
+        return res.sendStatus(500);
     }
     
+    res.token = token;
     next();
 }

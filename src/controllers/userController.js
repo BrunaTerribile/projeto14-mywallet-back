@@ -1,18 +1,26 @@
-import {sessionsCollection, extractCollection, usersCollection} from "../database/db.js"
+import { sessionsCollection, extractCollection, usersCollection } from "../database/db.js"
+import joi from 'joi'
+
+const extractSchema = joi.object({
+    date: joi.string().required(),
+    description: joi.string().required(),
+    value: joi.number().required()
+})
+
 
 export async function getExtract(req, res){
-    const { token } = req.headers
+    const token = res.token;
     
     try {
-        const session = await sessionsCollection.findOne({token})
-        const extract = await extractCollection.findOne({_id: session?.userId})
+        const session = await sessionsCollection.findOne({ token });
+        const user = await usersCollection.findOne({ _id: session?.userId });
 
-        if(!extract){
+        if(!user){
             return res.sendStatus(401)
         }
-        
-        //delete user.password;
-        res.send(extract)
+
+        const extract = await extractCollection.find({userId: user._id}).toArray();
+        res.status(201).send(extract)
     } catch (err) {
         console.log(err)
         res.sendStatus(500)
@@ -20,19 +28,24 @@ export async function getExtract(req, res){
 }
 
 export async function addEntry(req, res){
-    const entry = req.body; //date, description and value
-    const { token } = req.headers
+    const { date, description, value } = req.body;
+    const user = res.locals.user
 
     try {
-        const session = await sessionsCollection.findOne({ token });
-        const user = await usersCollection.findOne({ _id: session?.userId });
+        const newEntry = {
+            date,
+            description,
+            value
+        }
 
-        if (!user) {
-        return res.sendStatus(401);
+        const { error } = extractSchema.validate(newEntry, { abortEarly: false}); //valida os dados vindos do front
+        if(error){
+            const errors =error.details.map((d) => d.message);
+            return res.status(400).send(errors)
         }
 
         await extractCollection.insertOne({
-        ... entry,
+        ...newEntry,
         userId: user._id,
         isIncoming: true
         });
@@ -45,19 +58,24 @@ export async function addEntry(req, res){
 }
 
 export async function addOutgo(req, res){
-    const outgo = req.body; //date, description and value
-    const { token } = req.headers
-
+    const { date, description, value } = req.body;
+    const user = res.locals.user
+    
     try {
-        const session = await sessionsCollection.findOne({ token });
-        const user = await usersCollection.findOne({ _id: session?.userId });
+        const newOutgo = {
+            date,
+            description,
+            value
+        }
 
-        if (!user) {
-        return res.sendStatus(401);
+        const { error } = extractSchema.validate(newOutgo, { abortEarly: false}); //valida os dados vindos do front
+        if(error){
+            const errors =error.details.map((d) => d.message);
+            return res.status(400).send(errors)
         }
 
         await extractCollection.insertOne({
-        ... outgo,
+        ...newOutgo,
         userId: user._id,
         isIncoming: false
         });
