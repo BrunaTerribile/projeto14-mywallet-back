@@ -52,6 +52,8 @@ export async function signIn(req, res){
             token,
             userId: userExist._id
         })
+
+    res.send({ token })
     } catch (err) {
         console.log(err)
         res.sendStatus(500)

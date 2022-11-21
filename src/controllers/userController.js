@@ -1,13 +1,8 @@
-import {sessionsCollection, extractCollection} from "../database/db.js"
+import {sessionsCollection, extractCollection, usersCollection} from "../database/db.js"
 
 export async function getExtract(req, res){
-    const { authorization } = req.headers;
-    const token = authorization?.replace("Bearer ", "")
-
-    if(!authorization) {
-        return res.sendStatus(401)
-    }
-
+    const { token } = req.headers
+    
     try {
         const session = await sessionsCollection.findOne({token})
         const extract = await extractCollection.findOne({_id: session?.userId})
@@ -26,13 +21,7 @@ export async function getExtract(req, res){
 
 export async function addEntry(req, res){
     const entry = req.body; //date, description and value
-    const { authorization } = req.headers;
-
-    const token = authorization?.replace("Bearer ", "");
-
-    if (!token) {
-        return res.sendStatus(401);
-    }
+    const { token } = req.headers
 
     try {
         const session = await sessionsCollection.findOne({ token });
@@ -57,13 +46,7 @@ export async function addEntry(req, res){
 
 export async function addOutgo(req, res){
     const outgo = req.body; //date, description and value
-    const { authorization } = req.headers;
-
-    const token = authorization?.replace("Bearer ", "");
-
-    if (!token) {
-        return res.sendStatus(401);
-    }
+    const { token } = req.headers
 
     try {
         const session = await sessionsCollection.findOne({ token });
