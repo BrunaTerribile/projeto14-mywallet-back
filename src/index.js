@@ -8,7 +8,7 @@ app.use(cors());
 app.use(express.json());
 
 //Rotas 
-app.post("/", signIn);
+app.post("/sign-in", signIn);
 
 app.post("/sign-up", signUp);
 

@@ -1,9 +1,7 @@
-import usersCollection from "../db.js"
-import sessionsCollection from "../db.js"
+import { usersCollection, sessionsCollection } from "../db.js"
 import bcrypt from "bcrypt"
 import { v4 as uuidV4 } from "uuid"
 import joi from 'joi'
-import { Db } from "mongodb"
 
 const userSchema = joi.object({
     name: joi.string().required(),

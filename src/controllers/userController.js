@@ -1,5 +1,4 @@
-import sessionsCollection from "../db.js"
-import extractCollection from "../db.js"
+import {sessionsCollection, extractCollection} from "../db.js"
 
 export async function getExtract(req, res){
     const { authorization } = req.headers;
@@ -17,7 +16,7 @@ export async function getExtract(req, res){
             return res.sendStatus(401)
         }
         
-        delete user.password;
+        //delete user.password;
         res.send(extract)
     } catch (err) {
         console.log(err)
