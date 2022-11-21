@@ -41,7 +41,7 @@ export async function signIn(req, res){
     try {
         const userExist = await usersCollection.findOne({ email }); //verifica se o email está cadastrado do bd
         if(!userExist) {
-            return res.sendStatus(401)
+            return res.status(401).send("email incorreto")
         }
         const passwordOk = bcrypt.compareSync(password, userExist.password); //verifica se a senha foi preenchida corretamente
         if(!passwordOk) {

@@ -5,7 +5,7 @@ export async function getUser(req, res, next){
     const token = authorization?.replace("Bearer ", "");
     
     if(!token) {
-        return res.status(401).send("parou no middleware");
+        return res.sendStatus(401);
     }
 
     try {
